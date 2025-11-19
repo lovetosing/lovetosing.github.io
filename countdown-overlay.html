@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer Overlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: transparent;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .countdown-container {
+            display: flex;
+            gap: 20px;
+            padding: 30px 40px;
+            background: transparent;
+        }
+
+        .time-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+        }
+
+        .time-value {
+            font-size: 72px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .time-label {
+            font-size: 56px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 8px;
+        }
+
+        .separator {
+            font-size: 72px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1;
+            align-self: flex-start;
+        }
+
+        /* Expired state */
+        .countdown-container.expired .time-value {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Countdown Display -->
+    <div class="countdown-container" id="countdownContainer">
+        <div class="time-block">
+            <div class="time-value" id="days">00</div>
+            <div class="time-label">Days</div>
+        </div>
+        <div class="separator">:</div>
+        <div class="time-block">
+            <div class="time-value" id="hours">00</div>
+            <div class="time-label">Hours</div>
+        </div>
+        <div class="separator">:</div>
+        <div class="time-block">
+            <div class="time-value" id="minutes">00</div>
+            <div class="time-label">Minutes</div>
+        </div>
+        <div class="separator">:</div>
+        <div class="time-block">
+            <div class="time-value" id="seconds">00</div>
+            <div class="time-label">Seconds</div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Christmas Day 2025 at midnight New York time
+        const TIMEZONE = 'America/New_York';
+        // December 25, 2025 at 12:00:00 AM EST (UTC-5)
+        const targetDate = new Date('2025-12-25T00:00:00-05:00');
+        let countdownInterval = null;
+
+        // Initialize
+        function init() {
+            startCountdown();
+        }
+
+        // Start countdown
+        function startCountdown() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        // Update countdown display
+        function updateCountdown() {
+            if (!targetDate) return;
+
+            const now = new Date();
+            const diff = targetDate - now;
+
+            const container = document.getElementById('countdownContainer');
+
+            if (diff <= 0) {
+                // Countdown expired
+                container.classList.add('expired');
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+
+            container.classList.remove('expired');
+
+            // Calculate time units
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            // Update display
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
